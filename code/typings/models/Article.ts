@@ -2,7 +2,7 @@ import { AuthorItem } from './_Author';
 import { BaseItem, FlagType } from './_Base'
 import { CategoryType } from './Category';
 import { CommentList } from './Comment';
-import { TagType } from './Tag';
+import { TagType } from './Label';
 export interface ArticleItem extends BaseItem {
   title       : string
   description : string

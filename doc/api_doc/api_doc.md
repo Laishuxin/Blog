@@ -254,15 +254,15 @@ CategoriesApi extends RestfulApi {
 
 
 
-### 3.4 Tags
+### 3.4 Labels
 
 #### 3.4.1 API PROTOTYPE
 
-|          |                   |
-| :------: | :---------------: |
-|  method  |        GET        |
-|   path   | /api/v1/blog/tags |
-| protocol |       HTTP        |
+|          |                     |
+| :------: | :-----------------: |
+|  method  |         GET         |
+|   path   | /api/v1/blog/labels |
+| protocol |        HTTP         |
 
 #### 3.4.2 PARAMS
 
@@ -277,9 +277,9 @@ CategoriesApi extends RestfulApi {
 ##### 3.4.3.1 Response Api
 
 ```ts
-CategoriesApi extends RestfulApi {
+LabelsApi extends RestfulApi {
   data: {
-    tag: string
+    label: string
     count: number
   }[]
 }
@@ -287,8 +287,8 @@ CategoriesApi extends RestfulApi {
 
 |   parameter   |  type   |             description             |
 | :-----------: | :-----: | :---------------------------------: |
-|     data      |  Array  |                Tags                 |
-|  data[i].tag  | String  |              Tag name               |
+|     data      |  Array  |               Labels                |
+|  data[i].tag  | String  |             Label name              |
 | data[i].count | Integer | the number of article with tag name |
 
 ##### 3.4.3.2 Status
