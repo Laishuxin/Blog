@@ -33,7 +33,7 @@
 | X-Access-Token |  false   | string  |  header  |           authority token.<br>**nul**l by default            |
 |     offset     |  false   | Integer |  query   |         offset from start page.<br>**0** by default.         |
 |     limit      |  false   | Integer |  query   |             limit per page.<br>**10** by default             |
-|   sortField    |  false   | string  |  query   | indicating sorting field.<br>options: createAt/updateAt/views/type/commentCount/<br>**updateAt** by default |
+|   sortField    |  false   | string  |  query   | indicating sorting field.<br>options: createAt/updateAt/views/commentCount/<br>**updateAt** by default |
 |     isAsc      |  false   | boolean |  query   |           ascending sort?<br>**false** by default.           |
 |    category    |  false   | string  |  query   | get articles by category.<br>options: `Category.name`<br>**null** by default, this means that query all categories. |
 
@@ -64,7 +64,6 @@ ArticlesApi extends RestfulApi {
 | status | description  |
 | :----: | :----------: |
 |  200   |      ok      |
-|  400   | bad request  |
 |  401   | unauthorized |
 |  404   |  not found   |
 |  500   | server error |
@@ -111,9 +110,9 @@ ArticlesItemApi extends RestfulApi {
 }
 ```
 
-| parameter |     type      |          description           |
-| :-------: | :-----------: | :----------------------------: |
-|   data    | `ArticleItem` | The article with indicating id |
+| parameter |         type         |          description           |
+| :-------: | :------------------: | :----------------------------: |
+|   data    | `ArticleItem | null` | The article with indicating id |
 
 ##### 3.2.3.2 Status
 
@@ -138,14 +137,14 @@ ArticlesItemApi extends RestfulApi {
 
 
 
-### 3.3 Comments
+### 3.3 Messages
 
 #### 3.3.1 API PROTOTYPE
 
 |          |                       |
 | :------: | :-------------------: |
 |  method  |          GET          |
-|   path   | /api/v1/blog/comments |
+|   path   | /api/v1/blog/messages |
 | protocol |         HTTP          |
 
 #### 3.3.2 PARAMS
@@ -155,42 +154,40 @@ ArticlesItemApi extends RestfulApi {
 | X-Access-Token  |  false   | string  |  header  |           authority token.<br>**nul**l by default            |
 | Accept-Language |  false   | string  |  header  |                     **zh-CN** by default                     |
 |    sortField    |  false   | string  |  query   | indicating sorting field.<br/>options: createAt/updateAt/count<br/>**updateAt** by default |
-|       id        |   true   | Integer |  query   |                        the article id                        |
+|      isAsc      |   true   | boolean |  query   |          ascending sort?<br/>**false** by default.           |
+|     offset      |  false   | Integer |  query   |          offset from start page<br>**0** by default          |
+|      limit      |  false   | Integer |  query   |             limit per page<br>**10** by default              |
 
 #### 3.3.3 RESPONSE
 
 ##### 3.3.3.1 Response Api
 
 ```ts
-CommentsApi extends RestfulApi {
+MessagesApi extends RestfulApi {
   data: {
-    data: CommentList,
-    count: number
+    data: MessageList,
   }
 }
 ```
 
-| parameter |     type      |             description              |
-| :-------: | :-----------: | :----------------------------------: |
-|   data    | `CommentList` | All the comments that has been found |
+| parameter |        type        |             description              |
+| :-------: | :----------------: | :----------------------------------: |
+|   data    | `MessageList|null` | All the messages that has been found |
 
 ##### 3.3.3.2 Status
 
 | status | description  |
 | :----: | :----------: |
 |  200   |      ok      |
-|  400   | bad request  |
-|  404   |  not found   |
 |  500   | server error |
 
 ##### 3.3.3.3 Message
 
-|   message    | status |                 description                 |
-| :----------: | :----: | :-----------------------------------------: |
-|   success    |  200   |             query successfully              |
-|  not allow   |  403   | the article has not been publishednot allow |
-|  not found   |  404   |  not found the article with indicating id   |
-| server error |  500   |      error occur when executing query       |
+|   message    | status |              description              |
+| :----------: | :----: | :-----------------------------------: |
+|   success    |  200   |          query successfully           |
+|   not more   |  200   | `offset + limit > messageList.length` |
+| server error |  500   |   error occur when executing query    |
 
 
 
@@ -211,7 +208,7 @@ CommentsApi extends RestfulApi {
 |   parameter    | required |  type   | position |                         description                          |
 | :------------: | :------: | :-----: | :------: | :----------------------------------------------------------: |
 | X-Access-Token |  false   | string  |  header  |           authority token.<br>**nul**l by default            |
-|   sortField    |  false   | string  |  query   | indicating sorting field.<br>options: createAt/updateAt/articleCount/<br>**articleCount** by default |
+|   sortField    |  false   | string  |  query   | indicating sorting field.<br>options: articleCount/<br>**articleCount** by default |
 |     isAsc      |  false   | boolean |  query   |           ascending sort?<br>**false** by default.           |
 
 #### 3.4.3 RESPONSE
@@ -238,7 +235,6 @@ CategoriesApi extends RestfulApi {
 | status | description  |
 | :----: | :----------: |
 |  200   |      ok      |
-|  400   | bad request  |
 |  401   | unauthorized |
 |  404   |  not found   |
 |  500   | server error |
@@ -251,6 +247,7 @@ CategoriesApi extends RestfulApi {
 | unrecognized sort field |  200   | unrecognized sort field when sortField is not in the \<options\>,<br> using default sort rule instead. |
 |   authorization error   |  401   |                        expired token                         |
 |      server error       |  500   |               error occur when executing query               |
+|        not found        |  404   |                     categories not found                     |
 
 
 
@@ -269,7 +266,7 @@ CategoriesApi extends RestfulApi {
 |   parameter    | required |  type   | position |                         description                          |
 | :------------: | :------: | :-----: | :------: | :----------------------------------------------------------: |
 | X-Access-Token |  false   | string  |  header  |           authority token.<br>**nul**l by default            |
-|   sortField    |  false   | string  |  query   | indicating sorting field.<br>options: createAt/updateAt/articleCount/<br>**articleCount** by default |
+|   sortField    |  false   | string  |  query   | indicating sorting field.<br>options: articleCount/<br>**articleCount** by default |
 |     isAsc      |  false   | boolean |  query   |           ascending sort?<br>**false** by default.           |
 
 #### 3.4.3 RESPONSE
