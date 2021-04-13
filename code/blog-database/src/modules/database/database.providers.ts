@@ -1,6 +1,5 @@
 import { createConnection } from 'typeorm';
-import dbConfig from '../../config/db'
-
+import dbConfig from '../../config/db';
 
 export const databaseProviders = [
   {
@@ -12,7 +11,7 @@ export const databaseProviders = [
         port: dbConfig.port,
         username: dbConfig.username,
         password: dbConfig.password,
-        database: 'test',
+        database: dbConfig.database,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
       }),
