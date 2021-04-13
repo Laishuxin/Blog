@@ -6,8 +6,8 @@ const mysql = {
   port: 3306,
   username: 'admin',
   password: 'admin',
-  database: 'db_blog',
-  entities: [join(__dirname, '../', '**/**.entity{.ts,.js}')],
+  database: 'test',
+  entities: [join(__dirname, '/../modules/', '**/**.entity{.ts,.js}')],
   synchronize: true,
   connectionLimit: 10,
 };
