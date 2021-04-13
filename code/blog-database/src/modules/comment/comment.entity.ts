@@ -1,10 +1,13 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  TreeChildren,
+  TreeParent,
 } from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
 
@@ -21,19 +24,21 @@ export class CommentEntity {
 
   @Column({
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'create_at',
     nullable: false,
     comment: '创建时间',
   })
-  createAt: number;
+  createAt: string;
 
   @Column({
     type: 'timestamp',
-    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'update_at',
     nullable: false,
     comment: '更新时间',
   })
-  updateAt: number;
+  updateAt: string;
   // - common fields end
 
   // - main fields start
@@ -71,30 +76,22 @@ export class CommentEntity {
   // - main fields end
 
   // relations
-  @Column({
-    type: 'bigint',
+  @JoinColumn({
     name: 'article_id',
-    comment: '文章id',
   })
-  @ManyToOne(() => ArticleEntity, (article) => article.comments)
+  @ManyToOne(() => ArticleEntity, (article) => article.comments, {
+    // cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   articles: ArticleEntity;
 
   // - self-relation
-  @Column({
-    name: 'children_id',
-    type: 'bigint',
-    nullable: true,
-    default: null,
-    comment: '二级评论id',
-  })
-  children: CommentEntity;
+  @TreeChildren()
+  @JoinColumn({ name: 'children_id' })
+  children: CommentEntity[];
 
-  @Column({
-    name: 'parent_id',
-    type: 'bigint',
-    nullable: true,
-    default: null,
-    comment: '父评论id',
-  })
+  @TreeParent()
+  @JoinColumn({ name: 'parent_id' })
   parent: CommentEntity;
 }

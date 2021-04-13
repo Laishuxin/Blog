@@ -9,6 +9,7 @@ const mysql = {
   database: 'db_blog',
   entities: [join(__dirname, '../', '**/**.entity{.ts,.js}')],
   synchronize: true,
+  connectionLimit: 10,
 };
 
-export default mysql
+export default mysql;

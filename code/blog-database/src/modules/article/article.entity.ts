@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   Generated,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -26,19 +27,21 @@ export class ArticleEntity {
 
   @Column({
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'create_at',
     nullable: false,
     comment: '创建时间',
   })
-  createAt: number;
+  createAt: string;
 
   @Column({
     type: 'timestamp',
-    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'update_at',
     nullable: false,
     comment: '更新时间',
   })
-  updateAt: number;
+  updateAt: string;
   // - common fields end
 
   // - main fields start
@@ -127,33 +130,50 @@ export class ArticleEntity {
   // - flags end
 
   // relations
-  @Column({ name: 'user_id', comment: '用户id' })
-  @Generated('uuid')
-  @ManyToOne(() => UserEntity, (user) => user.articles)
+  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => UserEntity, (user) => user.articles, {
+    // cascade: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
   userId: string;
 
-  @Column({
+  @JoinColumn({
     name: 'category_id',
-    type: 'bigint',
-    comment: '文章分类id',
   })
-  @ManyToOne(() => CategoryEntity, (category) => category.articles)
+  @ManyToOne(() => CategoryEntity, (category) => category.articles, {
+    // cascade: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
   categoryId: number;
 
-  @Column({
+  @JoinColumn({
     name: 'tag_id',
-    type: 'bigint',
-    comment: '标签id',
   })
-  @ManyToMany(() => TagEntity)
-  @JoinTable()
+  @ManyToMany(() => TagEntity, {
+    // cascade: true,
+    // onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinTable({
+    name: 't_article_tag',
+    joinColumn: {
+      name: 'article_id',
+    },
+    inverseJoinColumn: {
+      name: 'tag_id',
+    },
+  })
   tags: TagEntity;
 
-  @Column({
+  @JoinColumn({
     name: 'comment_id',
-    type: 'bigint',
-    comment: '评论id',
   })
-  @OneToMany(() => CommentEntity, (comment) => comment.articles)
+  @OneToMany(() => CommentEntity, (comment) => comment.articles, {
+    // cascade: true,
+    // onDelete: 'CASCADE',
+    // onUpdate: 'CASCADE',
+  })
   comments: CommentEntity;
 }

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   OneToMany,
   OneToOne,
@@ -21,19 +22,21 @@ export class TagEntity {
 
   @Column({
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'create_at',
     nullable: false,
     comment: '创建时间',
   })
-  createAt: number;
+  createAt: string;
 
   @Column({
     type: 'timestamp',
-    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'update_at',
     nullable: false,
     comment: '更新时间',
   })
-  updateAt: number;
+  updateAt: string;
   // - common fields end
 
   // - main fields start
@@ -42,16 +45,19 @@ export class TagEntity {
     length: 32,
     nullable: false,
     comment: '标签名',
+    unique: true,
   })
   name: string;
   // - main fields end
 
   // relations
-  @Column({
+  @JoinColumn({
     name: 'article_id',
-    type: 'bigint',
-    comment: '文章id',
   })
-  @ManyToMany(() => ArticleEntity)
+  @ManyToMany(() => ArticleEntity, {
+    // cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   articles: ArticleEntity;
 }

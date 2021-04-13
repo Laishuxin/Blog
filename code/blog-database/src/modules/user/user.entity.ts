@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ArticleEntity } from '../article/article.entity';
 
 export enum RoleEnum {
@@ -16,25 +22,28 @@ export class UserEntity {
 
   @Column({
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'create_at',
     nullable: false,
     comment: '创建时间',
   })
-  createAt: number;
+  createAt: string;
 
   @Column({
     type: 'timestamp',
-    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'update_at',
     nullable: false,
     comment: '更新时间',
   })
-  updateAt: number;
+  updateAt: string;
   // - common fields end
 
   @Column({
     type: 'varchar',
     length: 32,
     nullable: false,
+    unique: true,
   })
   username: string;
 
@@ -91,11 +100,13 @@ export class UserEntity {
   avatar: string;
 
   // relations
-  @Column({
+  @JoinColumn({
     name: 'article_id',
-    type: 'bigint',
-    comment: '文章id',
   })
-  @OneToMany(() => ArticleEntity, (article) => article.userId)
+  @OneToMany(() => ArticleEntity, (article) => article.userId, {
+    // cascade: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
   articles: ArticleEntity;
 }
